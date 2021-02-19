@@ -12,9 +12,8 @@ var (
 
 // Создаем и записываем данные в новый файл.
 func WriteNewFile(fileName string, data []byte) (err error) {
-	if _, err = os.Stat(fileName); err == nil {
-		err = ErrorFileIsExists
-		return
+	if FileIsExists(fileName) {
+		return ErrorFileIsExists
 	}
 
 	fi, err := os.Create(fileName)
@@ -33,4 +32,18 @@ func WriteNewFile(fileName string, data []byte) (err error) {
 	}
 
 	return
+}
+
+func FileIsExists(fileName string) bool {
+	if _, err := os.Stat(fileName); err == nil {
+		return true
+	}
+	return false
+}
+
+func RemovingFile(fileName string) error {
+	if err := os.Remove(fileName); err != nil {
+		return err
+	}
+	return nil
 }
