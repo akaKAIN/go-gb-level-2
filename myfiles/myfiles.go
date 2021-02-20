@@ -1,3 +1,4 @@
+// Пакет для работы с файловой системой
 package myfiles
 
 import (
@@ -34,6 +35,7 @@ func WriteNewFile(fileName string, data []byte) (err error) {
 	return
 }
 
+//Функция проверки существования указанного файла
 func FileIsExists(fileName string) bool {
 	if _, err := os.Stat(fileName); err == nil {
 		return true
@@ -41,6 +43,7 @@ func FileIsExists(fileName string) bool {
 	return false
 }
 
+//Функция удаления указанного файла
 func RemovingFile(fileName string) error {
 	if err := os.Remove(fileName); err != nil {
 		return err
