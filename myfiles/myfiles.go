@@ -39,7 +39,6 @@ func WriteNewFile(fileName string, data []byte) (err error) {
 	return
 }
 
-
 // Функция проверки существования указанного файла
 func FileIsExists(fileName string) (bool, error) {
 	isExist := true
