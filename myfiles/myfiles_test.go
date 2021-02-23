@@ -11,16 +11,16 @@ import (
 
 func TestWriteNewFile_CaseFileExists(t *testing.T) {
 	baseData := []byte("Test data")
-	tf, err := ioutil.TempFile("", "prefix")
+	tempFile, err := ioutil.TempFile("", "prefix")
 	if err != nil {
 		t.Fatalf("Creation temp file: %s", err)
 	}
 	defer func() {
-		if err = os.Remove(tf.Name()); err != nil {
+		if err = os.Remove(tempFile.Name()); err != nil {
 			t.Fatal("Error of closing temp file for tests", err)
 		}
 	}()
-	err = WriteNewFile(tf.Name(), baseData)
+	err = WriteNewFile(tempFile.Name(), baseData)
 	if err == nil {
 		t.Fatalf("Must throw error: %s", ErrorFileIsExists)
 	}
@@ -46,8 +46,8 @@ func TestWriteNewFile_CaseCreatingFile(t *testing.T) {
 
 	for _, tc := range tests {
 		// Проверяем что не сущетвует одноиенных файлов. Иначе - удаляем их.
-		if FileIsExists(tc.fileName) {
-			err := RemovingFile(tc.fileName)
+		if ok, err := FileIsExists(tc.fileName); ok && err != nil {
+			err := RemoveFile(tc.fileName)
 			if err != nil {
 				t.Fatalf(
 					"%s\nCan't remove file: %s, error: %s",
@@ -62,19 +62,19 @@ func TestWriteNewFile_CaseCreatingFile(t *testing.T) {
 		if err != nil {
 			t.Fatalf("%s\nmust no errors, but gotten: %s", tc.name, err)
 		}
-		if !FileIsExists(tc.fileName) {
-			t.Fatalf("%s\ncreated file did not exists", tc.name)
-		} else {
-			fi, err := os.ReadFile(tc.fileName)
-			if err != nil {
-				t.Fatalf("%s: %s", tc.name, err)
-			}
-			if !reflect.DeepEqual(tc.data, fi) {
-				t.Fatalf("%s\nMust be %v, but got %v", tc.name, tc.data, fi)
-			}
+		if ok, err := FileIsExists(tc.fileName); !ok {
+			t.Fatalf("%s\ncreated file did not exists. Error: %s", tc.name, err)
 		}
 
-		if FileIsExists(tc.fileName) {
+		fi, err := os.ReadFile(tc.fileName)
+		if err != nil {
+			t.Fatalf("%s: %s", tc.name, err)
+		}
+		if !reflect.DeepEqual(tc.data, fi) {
+			t.Fatalf("%s\nMust be %v, but got %v", tc.name, tc.data, fi)
+		}
+
+		if ok, err := FileIsExists(tc.fileName); ok {
 			if err = os.Remove(tc.fileName); err != nil {
 				t.Fatalf(
 					"%s\nCan't removed file after success creation: %s",
@@ -96,7 +96,7 @@ func TestRemovingFile(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err := RemovingFile(fileName); err != nil {
+	if err := RemoveFile(fileName); err != nil {
 		t.Fatal(err)
 	}
 

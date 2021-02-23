@@ -3,6 +3,7 @@ package myfiles
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"os"
 )
@@ -13,8 +14,11 @@ var (
 
 // Создаем и записываем данные в новый файл.
 func WriteNewFile(fileName string, data []byte) (err error) {
-	if FileIsExists(fileName) {
-		return ErrorFileIsExists
+	if ok, err := FileIsExists(fileName); ok {
+		if err == nil {
+			err = ErrorFileIsExists
+		}
+		return fmt.Errorf("%w: %s", err, fileName)
 	}
 
 	fi, err := os.Create(fileName)
@@ -22,8 +26,8 @@ func WriteNewFile(fileName string, data []byte) (err error) {
 		return
 	}
 	defer func() {
-		if closeErr := fi.Close(); closeErr != nil {
-			log.Println(closeErr)
+		if err := fi.Close(); err != nil {
+			log.Println(err)
 		}
 	}()
 
@@ -35,16 +39,21 @@ func WriteNewFile(fileName string, data []byte) (err error) {
 	return
 }
 
-//Функция проверки существования указанного файла
-func FileIsExists(fileName string) bool {
-	if _, err := os.Stat(fileName); err == nil {
-		return true
+
+// Функция проверки существования указанного файла
+func FileIsExists(fileName string) (bool, error) {
+	isExist := true
+
+	_, err := os.Stat(fileName)
+	if err != nil {
+		isExist = false
 	}
-	return false
+
+	return isExist, err
 }
 
-//Функция удаления указанного файла
-func RemovingFile(fileName string) error {
+// Функция удаления указанного файла
+func RemoveFile(fileName string) error {
 	if err := os.Remove(fileName); err != nil {
 		return err
 	}
