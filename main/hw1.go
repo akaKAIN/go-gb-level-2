@@ -21,7 +21,7 @@ func CallPanic() {
 
 	var result int
 	for i := 10; i > -5; i-- {
-		result = 10/i
+		result = 10 / i
 	}
 	fmt.Println(result)
 }
