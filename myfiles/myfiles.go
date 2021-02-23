@@ -14,7 +14,10 @@ var (
 // Создаем и записываем данные в новый файл.
 func WriteNewFile(fileName string, data []byte) (err error) {
 	if ok, err := FileIsExists(fileName); ok {
-		return fmt.Errorf("file is exist: %w", err)
+		if err == nil {
+			err = ErrorFileIsExists
+		}
+		return fmt.Errorf("%w: %s", err, fileName)
 	}
 
 	fi, err := os.Create(fileName)
