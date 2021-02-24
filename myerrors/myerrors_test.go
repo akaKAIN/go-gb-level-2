@@ -5,7 +5,7 @@ import (
 )
 
 func TestNewErrorTime(t *testing.T) {
-	message := "error error"
+	message := "error with time"
 	err := NewErrorTime(message)
 
 	errStruct, ok := err.(*ErrorWithTime)
@@ -18,7 +18,7 @@ func TestNewErrorTime(t *testing.T) {
 }
 
 func TestNewErrorTrace(t *testing.T) {
-	message := "error error"
+	message := "error with stack trace"
 	err := NewErrorTrace(message)
 
 	errStruct, ok := err.(*ErrorWithStackTrace)
