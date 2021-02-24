@@ -8,7 +8,6 @@ import (
 
 // Ошибка сохраняющая время создания
 func NewErrorTime(errorText string) error {
-
 	return &ErrorWithTime{
 		Text: errorText,
 		Time: time.Now(),

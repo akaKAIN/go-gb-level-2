@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func NewErrorTimeTest(t *testing.T) {
+func TestNewErrorTime(t *testing.T) {
 	message := "error error"
 	err := NewErrorTime(message)
 
@@ -17,13 +17,13 @@ func NewErrorTimeTest(t *testing.T) {
 	}
 }
 
-func NewErrorTraceTest(t *testing.T) {
+func TestNewErrorTrace(t *testing.T) {
 	message := "error error"
-	err := NewErrorTime(message)
+	err := NewErrorTrace(message)
 
 	errStruct, ok := err.(*ErrorWithStackTrace)
 	if !ok {
-		t.Fatal("Wrong error struct")
+		t.Fatal("Wrong error struct", errStruct)
 	}
 	if errStruct.Text != message {
 		t.Fatalf("wrong message text. Want: %s, Get: %s\n", message, errStruct.Text)
