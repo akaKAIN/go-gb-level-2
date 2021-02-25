@@ -7,3 +7,6 @@ cover:
 
 bench:
 	go test -bench=. ./...
+
+graph:
+	go mod graph | modv | dot -T png | open -f -a /System/Applications/Preview.app
