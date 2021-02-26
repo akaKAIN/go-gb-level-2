@@ -8,5 +8,13 @@ cover:
 bench:
 	go test -bench=. ./...
 
+
+doc:
+	godoc -http=:6060
+
+build:
+	GOOS=linux go build -o ./builds/linuxFile main/hw1.go
+	GOOS=windows GOARCH=amd64 go build -o ./builds/win.exe main/hw1.go
+
 graph:
 	go mod graph | modv | dot -T png | open -f -a /System/Applications/Preview.app
