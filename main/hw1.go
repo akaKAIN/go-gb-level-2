@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/akaKAIN/go-gb-level-2/myerrors"
 	"github.com/akaKAIN/go-gb-level-2/myfiles"
-	"log"
 )
 
 func main() {
