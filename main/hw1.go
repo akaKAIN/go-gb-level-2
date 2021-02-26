@@ -2,33 +2,19 @@ package main
 
 import (
 	"fmt"
-	"github.com/akaKAIN/go-gb-level-2/myerrors"
-	"github.com/akaKAIN/go-gb-level-2/myfiles"
-	"log"
+	"time"
 )
 
 func main() {
-	CallPanic()
-
-	err := myfiles.WriteNewFile("testFile.txt", []byte("Test"))
-	if err != nil {
-		log.Println("Error: ", err)
-	}
+	var count int
+	go ReadChan(&count)
+	time.Sleep(time.Second)
+	count = 20
+	time.Sleep(10 * time.Second)
 }
 
-func CallPanic() {
-	defer recoverIt()
-
-	var result int
-	for i := 10; i > -5; i-- {
-		result = 10 / i
-	}
-	fmt.Println(result)
-}
-
-func recoverIt() {
-	if r := recover(); r != nil {
-		err := fmt.Sprintf("%s", r)
-		fmt.Println(myerrors.NewErrorTime(err))
-	}
+func ReadChan(num *int) {
+	fmt.Println(*num)
+	time.Sleep(2 * time.Second)
+	fmt.Println(*num)
 }
