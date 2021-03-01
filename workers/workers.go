@@ -1,3 +1,4 @@
+// Пакет для работы с паттерном "Пул-воркеров"
 package workers
 
 func WorkerHandler(workerQuantity int, handler func()) {
@@ -23,6 +24,8 @@ func WorkerHandler(workerQuantity int, handler func()) {
 	}
 }
 
+
 func Worker(ch chan<- struct{}) {
+	//Простейший воркер
 	ch <- struct{}{}
 }
