@@ -1,3 +1,4 @@
+// Пакет для создания кастомных ошибок.
 package myerrors
 
 import (
@@ -5,16 +6,18 @@ import (
 	"time"
 )
 
+// Ошибка сохраняющая время создания
 func NewErrorTime(errorText string) error {
 	return &ErrorWithTime{
-		text: errorText,
-		time: time.Now(),
+		Text: errorText,
+		Time: time.Now(),
 	}
 }
 
+// Ошибка, хранящая стек вызовов, которые привели к ее созникновнию.
 func NewErrorTrace(errorText string) error {
 	return &ErrorWithStackTrace{
-		text:       errorText,
-		stackTrace: debug.Stack(),
+		Text:       errorText,
+		StackTrace: debug.Stack(),
 	}
 }
