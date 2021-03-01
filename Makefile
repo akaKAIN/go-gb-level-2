@@ -1,3 +1,6 @@
+run:
+	go run main/hw.go
+
 test:
 	go test -v ./...
 
@@ -12,5 +15,5 @@ doc:
 	godoc -http=:6060
 
 build:
-	GOOS=linux go build -o ./builds/linuxFile main/hw1.go
-	GOOS=windows GOARCH=amd64 go build -o ./builds/win.exe main/hw1.go
+	GOOS=linux go build -o ./builds/linuxFile main/hw.go
+	GOOS=windows GOARCH=amd64 go build -o ./builds/win.exe main/hw.go
