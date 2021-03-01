@@ -26,10 +26,11 @@ func main() {
 	//workers.Start()
 	//mysign.SoftShotDown([]os.Signal{syscall.SIGINT}, os.Stdout, "well done")
 
-	channelBuffer := 100
+	channelBuffer := 5
 	ch := make(chan int, channelBuffer)
 	for i:=1; i<=channelBuffer; i++ {
 		ch <- i
 	}
+
 	workers.SleepingPool(3, ch, time.Second)
 }

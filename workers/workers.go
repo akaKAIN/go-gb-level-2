@@ -9,12 +9,6 @@ import (
 	"time"
 )
 
-type contextKey string
-
-func (c contextKey) String() string {
-	return fmt.Sprintf("%v", c)
-}
-
 func WorkerHandler(workerQuantity int, handler func()) {
 	// Запускаются воркеры в указанном количестве. Каждый выполняет свою работу (handler) в переданный ему канал и
 	// заверщает свою работу. Когда количество выполненных воркеров достигнет лимита, канал закроется и произойдет
@@ -59,30 +53,41 @@ func SleepingPool(workerQuantity int, ch <-chan int, sleepTime time.Duration) {
 			workerQuantity--
 		}
 	}
-	fmt.Println("All workers is dead.")
+	fmt.Println("All workers is out.")
 }
 
 func SleepingWorker(ctx context.Context, ch <-chan int, sleepDuration time.Duration, corpsCh chan<- struct{}) {
 	workerName := ctx.Value("name")
 
-	t := time.Duration(rand.Intn(10) + 4) * time.Second
-	fmt.Println("timer", t)
+	workerSleepDuration := time.Duration(rand.Intn(10e2)+200) * time.Millisecond
+	workerLifeDuration := time.Duration(rand.Intn(6)+6) * time.Second
+	fmt.Printf(
+		"worker %s: %dms/%ds\n",
+		workerName,
+		workerSleepDuration/time.Millisecond,
+		workerLifeDuration/time.Second,
+	)
 
-	ctx, finish := context.WithTimeout(ctx, time.Duration(rand.Intn(6) + 6) * time.Second)
+	ctx, finish := context.WithTimeout(ctx, workerLifeDuration)
+	workerOut := func() {
+		corpsCh <- struct{}{}
+		finish()
+	}
 
 	for {
 		select {
 		case <-ctx.Done():
 			fmt.Printf("worker %s is dead\n", workerName)
-			corpsCh <- struct{}{}
-			finish()
+			workerOut()
 			return
-		case work := <- ch:
+		case work := <-ch:
 			log.Printf("worker %s start job %d\n", workerName, work)
-			time.Sleep(sleepDuration)
+			time.Sleep(workerSleepDuration)
 			log.Printf("worker %s finish job %d\n", workerName, work)
 		default:
-			finish()
+			fmt.Printf("worker %s well done all works and out\n", workerName)
+			workerOut()
+			return
 		}
 	}
 }
