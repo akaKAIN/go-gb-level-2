@@ -2,7 +2,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/akaKAIN/go-gb-level-2/mysign"
 	"github.com/akaKAIN/go-gb-level-2/workers"
+	"os"
+	"syscall"
 )
 
 // 1. С помощью пула воркеров написать программу, которая запускает 1000 горутин,
@@ -17,5 +20,6 @@ func main() {
 	workers.WorkerHandler(1000, jobHandler)
 	fmt.Printf("Counter: %d\n", counter)
 
-	workers.Start()
+	//workers.Start()
+	mysign.SoftShotDown([]os.Signal{syscall.SIGINT}, os.Stdout, "well done")
 }
