@@ -2,11 +2,14 @@ package main
 
 import (
 	"fmt"
-	"github.com/akaKAIN/go-gb-level-2/mysign"
 	"github.com/akaKAIN/go-gb-level-2/workers"
-	"os"
-	"syscall"
+	"math/rand"
+	"time"
 )
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
 
 // 1. С помощью пула воркеров написать программу, которая запускает 1000 горутин,
 // каждая из которых увеличивает число на 1. Дождаться завершения всех горутин
@@ -21,5 +24,12 @@ func main() {
 	fmt.Printf("Counter: %d\n", counter)
 
 	//workers.Start()
-	mysign.SoftShotDown([]os.Signal{syscall.SIGINT}, os.Stdout, "well done")
+	//mysign.SoftShotDown([]os.Signal{syscall.SIGINT}, os.Stdout, "well done")
+
+	channelBuffer := 100
+	ch := make(chan int, channelBuffer)
+	for i:=1; i<=channelBuffer; i++ {
+		ch <- i
+	}
+	workers.SleepingPool(3, ch, time.Second)
 }
