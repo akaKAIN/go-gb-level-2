@@ -1,8 +1,6 @@
 package main
 
-import (
-	"github.com/akaKAIN/go-gb-level-2/myatomic"
-)
+import "github.com/akaKAIN/go-gb-level-2/myatomic"
 
 type Book struct {
 	id     int
@@ -11,14 +9,8 @@ type Book struct {
 }
 
 func main() {
-	//db, err := mydb.DbMutex()
-	//if err != nil {
-	//	log.Println(err)
-	//}
-	//var book Book
-	//r := db.QueryRow("SELECT * from book limit 1")
-	//err = r.Scan(&book.id, &book.name, &book.author)
-	//fmt.Println("OUTPUT", book, err)
+	count := 1000
+	myatomic.StartGo(count, myatomic.SimpleHandler)
 
-	myatomic.SimpleCounter()
+
 }

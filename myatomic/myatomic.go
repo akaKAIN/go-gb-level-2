@@ -1,3 +1,4 @@
+// Тут приведены практические примеры из методичек и издевательства над ними
 package myatomic
 
 import (
@@ -48,8 +49,8 @@ func Increment() {
 func SimpleCounter() {
 	var (
 		counter int64 = 0
-		limit   = 1000
-		m sync.Mutex
+		limit         = 1000
+		m       sync.Mutex
 	)
 	ch := make(chan struct{}, limit)
 
@@ -75,4 +76,28 @@ func Swap() {
 	var a = int64(2)
 	r := atomic.SwapInt64(&a, 1)
 	fmt.Println(r, a)
+}
+
+type Set struct {
+	sync.RWMutex
+	mm map[int]struct{}
+}
+
+func NewSet() *Set {
+	return &Set{
+		mm: make(map[int]struct{}),
+	}
+}
+
+func (s *Set) Add(i int) {
+	s.Lock()
+	s.mm[i] = struct{}{}
+	s.Unlock()
+}
+
+func (s *Set) Has(i int) bool {
+	s.RLock()
+	defer s.RUnlock()
+	_, ok := s.mm[i]
+	return ok
 }
