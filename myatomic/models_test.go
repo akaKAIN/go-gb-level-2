@@ -76,3 +76,124 @@ func TestIntArray_Push(t *testing.T) {
 		}
 	}
 }
+
+func TestIntArray_GetByIndex(t *testing.T) {
+	testTable := []struct {
+		name          string
+		inArr         []int
+		currentInd    int
+		expected      int
+		expectedError bool
+	}{
+		{
+			name:          "Must return error1",
+			inArr:         nil,
+			currentInd:    0,
+			expected:      0,
+			expectedError: true,
+		},
+		{
+			name:          "Must return error2",
+			inArr:         []int{1, 2, 3},
+			currentInd:    5,
+			expected:      0,
+			expectedError: true,
+		},
+		{
+			name:          "Must return 2 and no error",
+			inArr:         []int{1, 2, 3},
+			currentInd:    1,
+			expected:      2,
+			expectedError: false,
+		},
+	}
+
+	for _, tc := range testTable {
+		ia := NewMutexIntArray(tc.inArr...)
+		num, err := ia.GetByIndex(tc.currentInd)
+		if num != tc.expected || (err != nil) != tc.expectedError {
+			t.Fatalf(
+				"%s: expect: %d (error: %t), got: %d (error: %t\n)",
+				tc.name,
+				tc.expected,
+				tc.expectedError,
+				num,
+				err != nil,
+			)
+		}
+	}
+}
+
+func TestIntArray_Replace(t *testing.T) {
+	testTable := []struct {
+		name          string
+		inArr         []int
+		currentInd    int
+		oldNum        int
+		newNum        int
+		expectNum     int
+		expectArr     []int
+		expectedError bool
+	}{
+		{
+			name:          "Must return error1",
+			inArr:         nil,
+			currentInd:    0,
+			oldNum:        0,
+			newNum:        1,
+			expectNum:     0,
+			expectArr:     []int{},
+			expectedError: true,
+		},
+		{
+			name:          "Must return error2",
+			inArr:         []int{1, 2, 3},
+			currentInd:    4,
+			oldNum:        0,
+			newNum:        4,
+			expectNum:     0,
+			expectArr:     []int{1, 2, 3},
+			expectedError: true,
+		},
+		{
+			name:          "Replacing",
+			inArr:         []int{1, 2, 3, 4},
+			currentInd:    2,
+			oldNum:        3,
+			newNum:        5,
+			expectNum:     0,
+			expectArr:     []int{1, 2, 5, 4},
+			expectedError: false,
+		},
+	}
+
+	for _, tc := range testTable {
+		ia := NewMutexIntArray(tc.inArr...)
+		oldNum, err := ia.Replace(tc.currentInd, tc.newNum)
+		if tc.expectedError != (err != nil) {
+			t.Fatalf(
+				"%s: expect error: %t, but got error: %v",
+				tc.name,
+				tc.expectedError,
+				err,
+			)
+		}
+
+		if oldNum != tc.oldNum {
+			t.Fatalf(
+				"%s: wrong old number: expect %d, got %d\n",
+				tc.name,
+				tc.expectNum,
+				oldNum,
+			)
+		}
+
+		if !reflect.DeepEqual(tc.expectArr, ia.ArrayBody) {
+			t.Fatalf(
+				"%s: expect %v, got %v",
+				tc.name, tc.expectArr,
+				ia.ArrayBody,
+			)
+		}
+	}
+}
