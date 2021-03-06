@@ -6,7 +6,7 @@ cover:
 	go tool cover -html=cover.out
 
 bench:
-	go test -bench=. ./...
+	go test -cpu=1,2,4,8 -benchmem -bench=. ./...
 
 
 doc:

@@ -2,8 +2,6 @@ package myatomic
 
 import (
 	"reflect"
-	"runtime"
-	"strconv"
 	"testing"
 )
 
@@ -204,7 +202,7 @@ func BenchmarkIntArray_Push(b *testing.B) {
 	arr := []int{1, 2, 3, 4, 5, 6, 7}
 	injectNum := 0
 	ia := NewMutexIntArray(arr...)
-	b.Run(strconv.Itoa(runtime.GOMAXPROCS(8)), func(b *testing.B) {
+	b.Run("cpu", func(b *testing.B) {
 		b.SetParallelism(1000)
 		b.RunParallel(func(pb *testing.PB) {
 			for pb.Next() {
