@@ -28,7 +28,7 @@ func (i *IntArray) Push(newInt int) {
 }
 
 func (i *IntArray) Replace(ind, newInt int) (int, error) {
-	if ind > len(i.ArrayBody) {
+	if ind < 0 || ind > len(i.ArrayBody) {
 		return 0, ErrorIndexOutOfRange
 	}
 	i.lock.Lock()
