@@ -26,6 +26,10 @@ func main() {
 	}
 
 	// Task 3
-	myatomic.StartReadAndWrite(900, 100)
+	store := &myatomic.IntMapRWM{
+		Map: make(map[int]int),
+	}
+	myatomic.Fill(store, 1000)
+	myatomic.StartReadAndWrite(900, 100, store)
 
 }

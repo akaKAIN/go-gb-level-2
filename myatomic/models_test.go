@@ -213,29 +213,85 @@ func BenchmarkIntArray_Push(b *testing.B) {
 	})
 }
 
-func BenchmarkCase90_10(b *testing.B) {
+func BenchmarkCaseRWM90_10(b *testing.B) {
 	b.Run("cpu", func(b *testing.B) {
 		b.RunParallel(func(pb *testing.PB) {
+			store := &IntMapRWM{
+				Map: make(map[int]int),
+			}
+			Fill(store, 1000)
 			for pb.Next() {
-				StartReadAndWrite(900, 100)
+				StartReadAndWrite(900, 100, store)
 			}
 		})
 	})
 }
-func BenchmarkCase50_50(b *testing.B) {
+
+func BenchmarkCaseRWM50_50(b *testing.B) {
 	b.Run("cpu", func(b *testing.B) {
 		b.RunParallel(func(pb *testing.PB) {
+			store := &IntMapRWM{
+				Map: make(map[int]int),
+			}
+			Fill(store, 1000)
 			for pb.Next() {
-				StartReadAndWrite(500, 500)
+				StartReadAndWrite(500, 500, store)
 			}
 		})
 	})
 }
-func BenchmarkCase10_90(b *testing.B) {
+
+func BenchmarkCaseRWM10_90(b *testing.B) {
 	b.Run("cpu", func(b *testing.B) {
 		b.RunParallel(func(pb *testing.PB) {
+			store := &IntMapRWM{
+				Map: make(map[int]int),
+			}
+			Fill(store, 1000)
 			for pb.Next() {
-				StartReadAndWrite(100, 900)
+				StartReadAndWrite(100, 900, store)
+			}
+		})
+	})
+}
+
+func BenchmarkCaseM90_10(b *testing.B) {
+	b.Run("cpu", func(b *testing.B) {
+		b.RunParallel(func(pb *testing.PB) {
+			store := &IntMapM{
+				Map: make(map[int]int),
+			}
+			Fill(store, 1000)
+			for pb.Next() {
+				StartReadAndWrite(900, 100, store)
+			}
+		})
+	})
+}
+
+func BenchmarkCaseM50_50(b *testing.B) {
+	b.Run("cpu", func(b *testing.B) {
+		b.RunParallel(func(pb *testing.PB) {
+			store := &IntMapM{
+				Map: make(map[int]int),
+			}
+			Fill(store, 1000)
+			for pb.Next() {
+				StartReadAndWrite(500, 500, store)
+			}
+		})
+	})
+}
+
+func BenchmarkCaseM10_90(b *testing.B) {
+	b.Run("cpu", func(b *testing.B) {
+		b.RunParallel(func(pb *testing.PB) {
+			store := &IntMapM{
+				Map: make(map[int]int),
+			}
+			Fill(store, 1000)
+			for pb.Next() {
+				StartReadAndWrite(100, 900, store)
 			}
 		})
 	})
