@@ -22,15 +22,16 @@ func Increment() {
 	wg.Add(count)
 	for i := 0; i < count; i += 1 {
 		go func() {
+			defer wg.Done()
 			// Захват мьютекса
 			mutex.Lock()
+			defer mutex.Unlock()
+
 			counter += 1
-			// Освобождение мьютекса
-			mutex.Unlock()
 
 			// Фиксация факта запуска горутины в канале
 			ch <- struct{}{}
-			wg.Done()
+
 		}()
 	}
 	wg.Wait()

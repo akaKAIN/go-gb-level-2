@@ -8,21 +8,37 @@ import (
 	"time"
 )
 
-func SimpleHandler(wg *sync.WaitGroup) {
-	// Простая функция с ожиданием. По окончанию в wg идет оповещение и завершении работы функции
+func SimpleWorker(ch chan<- struct{}) {
+	// Простая функция с ожиданием. По окончании работы, сообщает в канал.
 	time.Sleep(time.Second)
-	defer wg.Done()
+	ch <- struct{}{}
 }
 
-func StartGo(quantity int, handler func(wg *sync.WaitGroup)) {
-	// Функция зупускает заданное количество горутин и ожидает их завершения
-	var wg sync.WaitGroup
+func StartGo(quantity int, worker func(ch chan<- struct{})) {
+	// Функция запускает заданное количество горутин и ожидает их завершения
+	var (
+		wg sync.WaitGroup
+		ch = make(chan struct{})
+	)
+
 	wg.Add(quantity)
 	for i := 0; i < quantity; i++ {
-		go handler(&wg)
+		go worker(ch)
 	}
+
+	go func() {
+		for {
+			_, ok := <-ch
+			if !ok {
+				break
+			}
+			wg.Done()
+		}
+	}()
+
 	wg.Wait()
-	fmt.Println("All goroutine was done")
+	close(ch)
+	fmt.Printf("%d goroutins was done\n", quantity)
 }
 
 func StartReadAndWrite(writeQuantity, readQuantity int) {
@@ -32,28 +48,35 @@ func StartReadAndWrite(writeQuantity, readQuantity int) {
 			lock: sync.RWMutex{},
 			Map:  make(map[int]int),
 		}
-		ctx, finish = context.WithCancel(context.Background())
 	)
 
+	// Заполняем "мапу" базовыми значениями
 	for i := 1; i <= writeQuantity+readQuantity; i++ {
 		_ = store.Add(i, i)
 	}
 
-	go ReadAndWrite(writeQuantity, readQuantity, &store, finish)
+	ctx, finish := context.WithCancel(context.Background())
+	go func() {
+		defer finish()
+		ReadAndWrite(writeQuantity, readQuantity, &store)
+	}()
 
 	for {
 		select {
 		case <-ctx.Done():
 			return
+		case <-time.After(time.Second):
+			fmt.Println("Timeout")
+			return
 		}
 	}
 }
 
-func ReadAndWrite(writeQuantity, readQuantity int, store Buffer, finish context.CancelFunc) {
+func ReadAndWrite(writeQuantity, readQuantity int, store Buffer) {
 	var (
 		wg sync.WaitGroup
 	)
-	wg.Add(writeQuantity + readQuantity)
+	wg.Add(writeQuantity)
 	go func() {
 		for w := 0; w < writeQuantity; w++ {
 			go func(i int) {
@@ -65,6 +88,7 @@ func ReadAndWrite(writeQuantity, readQuantity int, store Buffer, finish context.
 		}
 	}()
 
+	wg.Add(readQuantity)
 	go func() {
 		for r := 0; r < readQuantity; r++ {
 			go func(i int) {
@@ -76,5 +100,4 @@ func ReadAndWrite(writeQuantity, readQuantity int, store Buffer, finish context.
 		}
 	}()
 	wg.Wait()
-	finish()
 }
