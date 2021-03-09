@@ -7,7 +7,7 @@ import (
 
 var (
 	ErrorIndexOutOfRange = myerrors.NewErrorTime("Index is out of range")
-	ErrorNoKeyInMap = myerrors.NewErrorTime("Key did not exist in map")
+	ErrorNoKeyInMap      = myerrors.NewErrorTime("Key did not exist in map")
 )
 
 type Buffer interface {
@@ -69,7 +69,7 @@ func (i *IntArray) GetByIndex(ind int) (int, error) {
 
 type IntMap struct {
 	lock sync.RWMutex
-	Map map[int]int
+	Map  map[int]int
 }
 
 func (i *IntMap) Add(key, val int) error {

@@ -14,30 +14,30 @@ func TestWorker(t *testing.T) {
 
 func TestWorkerIncrement(t *testing.T) {
 	count := 0
-	handler := func() {count++}
-	testTable := []struct{
-		name string
+	handler := func() { count++ }
+	testTable := []struct {
+		name            string
 		workersQuantity int
-		handler func()
-		expect int
-	} {
+		handler         func()
+		expect          int
+	}{
 		{
-			name: "first",
+			name:            "first",
 			workersQuantity: 10,
-			handler: handler,
-			expect: 10,
+			handler:         handler,
+			expect:          10,
 		},
 		{
-			name: "second",
+			name:            "second",
 			workersQuantity: 100,
-			handler: handler,
-			expect: 100,
+			handler:         handler,
+			expect:          100,
 		},
 		{
-			name: "third",
+			name:            "third",
 			workersQuantity: 1000,
-			handler: handler,
-			expect: 1000,
+			handler:         handler,
+			expect:          1000,
 		},
 	}
 
