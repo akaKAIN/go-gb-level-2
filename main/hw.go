@@ -31,5 +31,4 @@ func main() {
 	}
 	myatomic.Fill(store, 1000)
 	myatomic.StartReadAndWrite(900, 100, store)
-
 }
