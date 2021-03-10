@@ -11,5 +11,12 @@ import "github.com/akaKAIN/go-gb-level-2/myarray"
 // 3. Смоделировать ситуацию “гонки”, и проверить программу на наличии “гонки”
 
 func main() {
-	myarray.TaskOne(100)
+	// 1
+	//myarray.TaskOne(100)
+
+	// 2
+	//myarray.TaskTwo(10e5)
+
+	// 3: $ go run -race main/hw.go
+	myarray.TaskThree()
 }
