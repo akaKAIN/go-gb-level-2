@@ -47,7 +47,7 @@ func TaskOne() {
 }
 
 func TaskTwo()  {
-	n, err := myreflect.Analyze("../mysign/mysign.go", "SoftShotDown")
+	n, err := myreflect.Analyze("workers/example.go", "SoftShotDown")
 	if err != nil {
 		log.Fatal(err)
 	}
