@@ -58,3 +58,12 @@ func RemoveFile(fileName string) error {
 	}
 	return nil
 }
+
+func ReadAllFile(fileName string) (string, error) {
+	fmt.Println(os.Getwd())
+	f, err := os.ReadFile(fileName)
+	if err != nil {
+		return "", err
+	}
+	return string(f), nil
+}
