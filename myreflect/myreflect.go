@@ -2,6 +2,10 @@ package myreflect
 
 import (
 	"errors"
+	"go/ast"
+	"go/parser"
+	"go/token"
+	"log"
 	"reflect"
 )
 
@@ -30,4 +34,19 @@ func UpdateStruct(user *User, values map[string]interface{}) error {
 	}
 
 	return nil
+}
+
+func Analyze(fileName, funcName string) (int, error) {
+	fileSet := token.NewFileSet()
+
+	f, err := parser.ParseFile(fileSet, fileName, "package mysign;", parser.DeclarationErrors)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err = ast.Print(fileSet, f); err != nil {
+		log.Fatal(err)
+	}
+
+
+	return 0, nil
 }
