@@ -26,14 +26,14 @@ func init() {
 func main() {
 	copyList, err := finder.FindCopy(*path, *file)
 	if err != nil {
-		log.Fatalf("find error: %v", err)
+		log.Fatalf("Find copy error: %v", err)
 	}
 	copyCount := len(copyList)
 
 	if copyCount > 0 {
 		fmt.Printf("Found copies: %d\n", copyCount)
-		for _, copyName := range copyList {
-			fmt.Println(copyName)
+		for i, copyName := range copyList {
+			fmt.Printf("%d. %s\n", i+1, copyName)
 		}
 	} else {
 		fmt.Printf("No copy of %q in path: %q\n", *file, *path)

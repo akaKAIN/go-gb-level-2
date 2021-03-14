@@ -50,13 +50,10 @@ func FindCopy(path, fileName string) ([]string, error) {
 		}
 	}()
 
-	checker.WgAdd()
 	WalkInDir(path, checker, copyFilePathCh)
-	checker.WgDone()
 
 	checker.WgWait()
 	close(copyFilePathCh)
-	fmt.Println(copyList)
 	return copyList, nil
 }
 
@@ -67,9 +64,7 @@ func FindCopy(path, fileName string) ([]string, error) {
 func WalkInDir(path string, c Checker, fileCh chan<- string) {
 	c.WgAdd()
 	defer c.WgDone()
-	if err := os.Chdir(path); err != nil {
-		return
-	}
+
 	dirList, err := os.ReadDir(path)
 	if err != nil {
 		return
