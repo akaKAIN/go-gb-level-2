@@ -7,7 +7,6 @@ import (
 	"time"
 )
 
-
 func Start() {
 	rand.Seed(time.Now().UnixNano())
 	var (

@@ -7,10 +7,10 @@ import (
 )
 
 type SearchTarget struct {
-	Name           string
-	Path           string
-	Size           int64
-	wg             *sync.WaitGroup
+	Name string
+	Path string
+	Size int64
+	wg   *sync.WaitGroup
 }
 
 type Checker interface {
@@ -58,6 +58,6 @@ func NewSearchTarget(fileName string) (*SearchTarget, error) {
 		Name: fi.Name(),
 		Path: path,
 		Size: fi.Size(),
-		wg: new(sync.WaitGroup),
+		wg:   new(sync.WaitGroup),
 	}, nil
 }

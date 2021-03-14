@@ -14,7 +14,6 @@ func ValidateDirPath(path string) error {
 		return ErrorPathIsNotDir
 	}
 
-
 	return nil
 }
 
