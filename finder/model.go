@@ -1,9 +1,14 @@
 package finder
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"sync"
+)
+
+var (
+	ErrorWrongFileName = errors.New("wrong file name")
 )
 
 type SearchTarget struct {
@@ -44,6 +49,10 @@ func (s *SearchTarget) WgWait() {
 }
 
 func NewSearchTarget(fileName string) (*SearchTarget, error) {
+	if fileName == "" {
+		return nil, ErrorWrongFileName
+	}
+
 	fi, err := os.Stat(fileName)
 	if err != nil {
 		return nil, err

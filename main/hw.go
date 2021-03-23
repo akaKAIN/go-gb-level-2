@@ -24,6 +24,8 @@ func init() {
 }
 
 func main() {
+	p, _ := os.Getwd()
+	fmt.Println(p)
 	copyList, err := finder.FindCopy(*path, *file)
 	if err != nil {
 		log.Fatalf("Find copy error: %v", err)
