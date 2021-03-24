@@ -1,5 +1,5 @@
-// Пакет для прикладной обработки сигналов
 package mysign
+// Пакет для прикладной обработки сигналов
 
 import (
 	"context"
@@ -21,7 +21,7 @@ func SoftShotDown(signList []os.Signal, writer *os.File, msg string) {
 		signCh       = make(chan os.Signal, 1)
 		ctx, cancel  = context.WithTimeout(context.Background(), timeLimit)
 
-		print = func(message string) {
+		show = func(message string) {
 			if _, err := fmt.Fprintf(writer, "\n%s\n", message); err != nil {
 				log.Println(message)
 			}
@@ -31,17 +31,17 @@ func SoftShotDown(signList []os.Signal, writer *os.File, msg string) {
 	signal.Notify(signCh, signList...)
 
 	defer cancel()
-	print(fmt.Sprintf("Press 'Ctrl+C' for cancel program of it will stop after %d sec", timeLimit/10e8))
+	show(fmt.Sprintf("Press 'Ctrl+C' for cancel program of it will stop after %d sec", timeLimit/10e8))
 	select {
 	case <-time.After(2 * timeLimit):
-		print("Over time. Never printing")
+		show("Over time. Never printing")
 
 	case <-signCh:
-		print("program stopping...")
+		show("program stopping...")
 		time.Sleep(timeBeforeSD)
-		print(msg)
+		show(msg)
 
 	case <-ctx.Done():
-		print("stop from context timeout")
+		show("stop from context timeout")
 	}
 }

@@ -1,22 +1,55 @@
 package main
 
-import "github.com/akaKAIN/go-gb-level-2/myarray"
+import (
+	"fmt"
+	"github.com/akaKAIN/go-gb-level-2/myreflect"
+	"log"
+)
 
-// 1. Написать программу, которая использует мьютекс для безопасного доступа к данным
-// из нескольких потоков. Выполните трассировку программы
-//
-// 2. Написать многопоточную программу, в которой будет использоваться явный вызов планировщика.
-// Выполните трассировку программы
-//
-// 3. Смоделировать ситуацию “гонки”, и проверить программу на наличии “гонки”
 
+/*
+   1. Написать функцию, которая принимает на вход структуру in
+   (struct или кастомную struct) и values map[string]interface{}
+   (key - название поля структуры, которому нужно присвоить value этой мапы).
+
+   Необходимо по значениям из мапы изменить входящую структуру in с помощью пакета reflect.
+   Функция может возвращать только ошибку error.
+   Написать к данной функции тесты (чем больше, тем лучше - зачтется в плюс).
+
+   2. Написать функцию, которая принимает на вход имя файла и название функции.
+   Необходимо подсчитать в этой функции количество вызовов асинхронных функций.
+   Результат работы должен возвращать количество вызовов int и ошибку error.
+   Разрешается использовать только go/parser, go/ast и go/token.
+
+   3*. Написать кодогенератор под какую-нибудь задачу.
+
+*/
+
+//go:generate go run hw.go
 func main() {
-	// 1
-	//myarray.TaskOne(100)
+	TaskOne()
+	TaskTwo()
+}
 
-	// 2
-	//myarray.TaskTwo(10e5)
+func TaskOne() {
+	var (
+		name = "Ivan"
+		age uint8 = 13
+	)
+	user := new(myreflect.User)
+	m := map[string]interface{}{
+		"Name": name,
+		"Age":  age,
+	}
+	if err := myreflect.UpdateStruct(user, m); err != nil {
+		log.Println(err)
+	}
+}
 
-	// 3: $ go run -race main/hw.go
-	myarray.TaskThree()
+func TaskTwo()  {
+	n, err := myreflect.Analyze("workers/example.go", "SoftShotDown")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(n)
 }
