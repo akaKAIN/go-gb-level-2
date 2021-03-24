@@ -1,34 +1,22 @@
 package main
 
-import (
-	"fmt"
-	"github.com/akaKAIN/go-gb-level-2/myatomic"
-)
+import "github.com/akaKAIN/go-gb-level-2/myarray"
+
+// 1. Написать программу, которая использует мьютекс для безопасного доступа к данным
+// из нескольких потоков. Выполните трассировку программы
+//
+// 2. Написать многопоточную программу, в которой будет использоваться явный вызов планировщика.
+// Выполните трассировку программы
+//
+// 3. Смоделировать ситуацию “гонки”, и проверить программу на наличии “гонки”
 
 func main() {
-	// Task 1
-	count := 1000
-	myatomic.StartGo(count, myatomic.SimpleWorker)
+	// 1
+	//myarray.TaskOne(100)
 
-	// Task 2
-	arr := myatomic.NewMutexIntArray(1, 2, 3, 4)
-	arr.Push(5)
-	old, err := arr.Replace(2, 0)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(old, arr.ArrayBody)
+	// 2
+	//myarray.TaskTwo(10e5)
 
-	if _, err = arr.Replace(10, 11); err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	// Task 3
-	store := &myatomic.IntMapRWM{
-		Map: make(map[int]int),
-	}
-	myatomic.Fill(store, 1000)
-	myatomic.StartReadAndWrite(900, 100, store)
+	// 3: $ go run -race main/hw.go
+	myarray.TaskThree()
 }
