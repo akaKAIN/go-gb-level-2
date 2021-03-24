@@ -41,24 +41,11 @@ func StartGo(quantity int, worker func(ch chan<- struct{})) {
 	fmt.Printf("%d goroutins was done\n", quantity)
 }
 
-func StartReadAndWrite(writeQuantity, readQuantity int) {
-
-	var (
-		store = IntMap{
-			lock: sync.RWMutex{},
-			Map:  make(map[int]int),
-		}
-	)
-
-	// Заполняем "мапу" базовыми значениями
-	for i := 1; i <= writeQuantity+readQuantity; i++ {
-		_ = store.Add(i, i)
-	}
-
+func StartReadAndWrite(writeQuantity, readQuantity int, store Buffer) {
 	ctx, finish := context.WithCancel(context.Background())
 	go func() {
 		defer finish()
-		ReadAndWrite(writeQuantity, readQuantity, &store)
+		ReadAndWrite(writeQuantity, readQuantity, store)
 	}()
 
 	for {

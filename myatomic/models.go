@@ -15,6 +15,13 @@ type Buffer interface {
 	Get(int) (int, error)
 }
 
+func Fill(store Buffer, limit int) {
+	// Заполняем "мапу" базовыми значениями
+	for i := 1; i <= limit; i++ {
+		_ = store.Add(i, i)
+	}
+}
+
 type IntArray struct {
 	ArrayBody []int
 	lock      sync.RWMutex
@@ -67,12 +74,12 @@ func (i *IntArray) GetByIndex(ind int) (int, error) {
 	return i.ArrayBody[ind], nil
 }
 
-type IntMap struct {
+type IntMapRWM struct {
 	lock sync.RWMutex
 	Map  map[int]int
 }
 
-func (i *IntMap) Add(key, val int) error {
+func (i *IntMapRWM) Add(key, val int) error {
 	i.lock.Lock()
 	defer i.lock.Unlock()
 
@@ -80,7 +87,7 @@ func (i *IntMap) Add(key, val int) error {
 	return nil
 }
 
-func (i *IntMap) Get(key int) (int, error) {
+func (i *IntMapRWM) Get(key int) (int, error) {
 	i.lock.RLock()
 	defer i.lock.RUnlock()
 

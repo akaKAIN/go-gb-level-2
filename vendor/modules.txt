@@ -4,14 +4,11 @@ github.com/akaKAIN/golib/mylib
 # github.com/akaKAIN/golib/v2 v2.0.1
 ## explicit
 github.com/akaKAIN/golib/v2/mylib
-<<<<<<< HEAD
+# github.com/davecgh/go-spew v1.1.1
+github.com/davecgh/go-spew/spew
 # github.com/go-sql-driver/mysql v1.5.0
 ## explicit
 github.com/go-sql-driver/mysql
-=======
-# github.com/davecgh/go-spew v1.1.1
-github.com/davecgh/go-spew/spew
->>>>>>> master
 # github.com/magefile/mage v1.10.0
 github.com/magefile/mage/mg
 github.com/magefile/mage/sh
