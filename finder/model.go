@@ -2,10 +2,14 @@ package finder
 
 import (
 	"errors"
+	"go.uber.org/zap"
+	"log"
 	"os"
 	"path/filepath"
 	"sync"
 )
+
+
 
 var (
 	ErrorWrongFileName = errors.New("wrong file name")
@@ -16,6 +20,7 @@ type SearchTarget struct {
 	Path string
 	Size int64
 	wg   *sync.WaitGroup
+	logger *zap.Logger
 }
 
 type Checker interface {
@@ -23,6 +28,8 @@ type Checker interface {
 	WgAdd()
 	WgDone()
 	WgWait()
+	ShowError(string)
+	ShowInfo(string)
 }
 
 func (s *SearchTarget) Check(fi os.FileInfo, filePath string) bool {
@@ -48,7 +55,24 @@ func (s *SearchTarget) WgWait() {
 	s.wg.Wait()
 }
 
+func (s *SearchTarget) ShowError(message string) {
+	s.logger.Error(message)
+}
+
+func (s *SearchTarget) ShowInfo(message string) {
+	s.logger.Info(message)
+}
+
 func NewSearchTarget(fileName string) (*SearchTarget, error) {
+	logger, _ := zap.NewProduction()
+	defer func(logger *zap.Logger) {
+		err := logger.Sync()
+		if err != nil {
+			log.Printf("logger init error: %s\n", fileName)
+		}
+	}(logger)
+	logger = logger.With(zap.String("fileName", fileName))
+
 	if fileName == "" {
 		return nil, ErrorWrongFileName
 	}
@@ -68,5 +92,6 @@ func NewSearchTarget(fileName string) (*SearchTarget, error) {
 		Path: path,
 		Size: fi.Size(),
 		wg:   new(sync.WaitGroup),
+		logger: logger,
 	}, nil
 }

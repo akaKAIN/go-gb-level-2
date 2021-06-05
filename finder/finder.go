@@ -15,7 +15,7 @@ var (
 	ErrorPathIsNotDir     = errors.New("the passed path is not a dir")
 )
 
-// Фукция для поиска совпадений файлов по имени и размеру.
+// FindCopy Фукция для поиска совпадений файлов по имени и размеру.
 // Получает на вход адрес директории для поиска и имя файла для поиска
 func FindCopy(path, fileName string) ([]string, error) {
 	if err := ValidateDirPath(path); err != nil {
@@ -34,6 +34,8 @@ func FindCopy(path, fileName string) ([]string, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error of init search target struct: %w", err)
 	}
+	initMessage := fmt.Sprintf("init new searchTarget: %s", fileName)
+	checker.ShowInfo(initMessage)
 	go func() {
 		for {
 			select {
@@ -57,11 +59,17 @@ func FindCopy(path, fileName string) ([]string, error) {
 	return copyList, nil
 }
 
-// Функция выполняет чтение содержимого директории.
+// WalkInDir Функция выполняет чтение содержимого директории.
 // Найденные директории рекурсивно вызывают WalkInDir.
 // Файлы проверяются на копирование. Если факт соответствия копии исходнику подтверждается, то
 // путь к файлу отправляется в канал fileCh.
 func WalkInDir(path string, c Checker, fileCh chan<- string) {
+	defer func() {
+		if r := recover(); r != nil {
+			c.ShowError("panic for path: " + path)
+		}
+	}()
+	counter := 1
 	c.WgAdd()
 	defer c.WgDone()
 
@@ -86,6 +94,11 @@ func WalkInDir(path string, c Checker, fileCh chan<- string) {
 		}
 
 		if dirFile.IsDir() {
+			if counter == 5 {
+				counter += 1
+				panic("counter > 3: panic!!!")
+			}
+			counter += 1
 			go WalkInDir(filePath, c, fileCh)
 			continue
 		}
