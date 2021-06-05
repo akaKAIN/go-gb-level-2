@@ -1,55 +1,56 @@
 package main
 
 import (
+	"bufio"
+	"flag"
 	"fmt"
-	"github.com/akaKAIN/go-gb-level-2/myreflect"
+	"github.com/akaKAIN/go-gb-level-2/finder"
 	"log"
+	"os"
+	"strings"
 )
 
+var (
+	path *string
+	file *string
+	d    *bool
+)
 
-/*
-   1. Написать функцию, которая принимает на вход структуру in
-   (struct или кастомную struct) и values map[string]interface{}
-   (key - название поля структуры, которому нужно присвоить value этой мапы).
+func init() {
+	path = flag.String("path", ".", "dir for search")
+	file = flag.String("file", "", "file name for search")
+	d = flag.Bool("d", false, "Need to delete found copy files?")
+	flag.Parse()
+}
 
-   Необходимо по значениям из мапы изменить входящую структуру in с помощью пакета reflect.
-   Функция может возвращать только ошибку error.
-   Написать к данной функции тесты (чем больше, тем лучше - зачтется в плюс).
-
-   2. Написать функцию, которая принимает на вход имя файла и название функции.
-   Необходимо подсчитать в этой функции количество вызовов асинхронных функций.
-   Результат работы должен возвращать количество вызовов int и ошибку error.
-   Разрешается использовать только go/parser, go/ast и go/token.
-
-   3*. Написать кодогенератор под какую-нибудь задачу.
-
-*/
-
-//go:generate go run hw.go
 func main() {
-	TaskOne()
-	TaskTwo()
-}
-
-func TaskOne() {
-	var (
-		name = "Ivan"
-		age uint8 = 13
-	)
-	user := new(myreflect.User)
-	m := map[string]interface{}{
-		"Name": name,
-		"Age":  age,
-	}
-	if err := myreflect.UpdateStruct(user, m); err != nil {
-		log.Println(err)
-	}
-}
-
-func TaskTwo()  {
-	n, err := myreflect.Analyze("workers/example.go", "SoftShotDown")
+	p, _ := os.Getwd()
+	fmt.Println(p)
+	copyList, err := finder.FindCopy(*path, *file)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Find copy error: %v", err)
 	}
-	fmt.Println(n)
+	copyCount := len(copyList)
+
+	if copyCount > 0 {
+		fmt.Printf("Found copies: %d\n", copyCount)
+		for i, copyName := range copyList {
+			fmt.Printf("%d. %s\n", i+1, copyName)
+		}
+	} else {
+		fmt.Printf("No copy of %q in path: %q\n", *file, *path)
+		return
+	}
+
+	scanner := bufio.NewScanner(os.Stdin)
+	if *d {
+		fmt.Print("\nAre you sure you want to delete the copies? (for confirm enter: 'yes'):\t")
+		scanner.Scan()
+		userAnswer := scanner.Text()
+		if strings.ToLower(userAnswer) == "yes" {
+			for _, copyName := range copyList {
+				fmt.Println("- deleted:", copyName)
+			}
+		}
+	}
 }
